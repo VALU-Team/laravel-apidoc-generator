@@ -130,6 +130,10 @@ class LaravelGenerator extends AbstractGenerator
             'Accept' => 'application/json',
         ])->merge($server)->toArray();
 
+        if ($method == "DELETE" || $method == "POST") {
+            return \response(null);
+        }
+
         $request = Request::create(
             $uri, $method, $parameters,
             $cookies, $files, $this->transformHeadersToServerVars($server), $content

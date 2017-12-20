@@ -40,7 +40,7 @@ class CollectionWriter
                         return [
                             'name' => $route['title'] != '' ? $route['title'] : url($route['uri']),
                             'request' => [
-                                'url' => url($route['uri']),
+                                'url' => secure_url($route['uri']),
                                 'method' => $route['methods'][0],
                                 'body' => [
                                     'mode' => 'formdata',
