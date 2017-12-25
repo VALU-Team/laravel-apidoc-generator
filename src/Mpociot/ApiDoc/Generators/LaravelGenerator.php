@@ -135,8 +135,12 @@ class LaravelGenerator extends AbstractGenerator
             return \response(null);
         }
 
+        if (env('APP_SECURE')) {
+            $uri = secure_url($uri);
+        }
+
         $request = Request::create(
-            $uri, $method, $parameters,
+            secure_url($uri), $method, $parameters,
             $cookies, $files, $this->transformHeadersToServerVars($server), $content
         );
 
