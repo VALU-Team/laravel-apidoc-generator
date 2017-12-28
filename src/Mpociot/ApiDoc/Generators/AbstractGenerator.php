@@ -47,6 +47,21 @@ abstract class AbstractGenerator
     abstract public function prepareMiddleware($disable = false);
 
     /**
+     * Check target tag from the docblock if available.
+     *
+     * @param array $tags
+     *
+     * @return mixed
+     */
+    protected function checkDocblockTagOf($targetTag, $tag)
+    {
+        if (! ($tag instanceof Tag)) {
+            return false;
+        }
+        return \strtolower($tag->getName()) == $targetTag;
+    }
+
+    /**
      * Get the response from the docblock if available.
      *
      * @param array $tags
@@ -56,18 +71,39 @@ abstract class AbstractGenerator
     protected function getDocblockResponse($tags)
     {
         $responseTags = array_filter($tags, function ($tag) {
-            if (! ($tag instanceof Tag)) {
-                return false;
-            }
-
-            return \strtolower($tag->getName()) == 'response';
+            return $this->checkDocblockTagOf("response", $tag);
         });
+
         if (empty($responseTags)) {
             return;
         }
         $responseTag = \array_first($responseTags);
 
         return \response($responseTag->getContent());
+    }
+    /**
+     * Check invalid header from the docblock if available.
+     *
+     * @param array $tags
+     *
+     * @return mixed
+     */
+    protected function getNoHeadersFromDockBlock($tags)
+    {
+        $noHeadersTags = array_filter($tags, function($tag) {
+            return $this->checkDocblockTagOf("no-headers", $tag);
+        });
+
+        if (empty($noHeadersTags)) {
+            return;
+        }
+
+        $noHeaders = [];
+        foreach($noHeadersTags as $tag) {
+            $noHeaders = array_merge($noHeaders, explode(",", $tag->getContent()));
+        }
+
+        return $noHeaders;
     }
 
     /**

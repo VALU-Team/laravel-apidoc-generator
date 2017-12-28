@@ -84,6 +84,17 @@ class LaravelGenerator extends AbstractGenerator
                 $content = $response->getContent();
             }
         }
+        
+        $display_headers = [];
+        foreach($headers as $header) {
+            $no_headers = $this->getNoHeadersFromDockBlock($routeDescription['tags']);
+            if (!$no_headers) {
+                $no_headers = [];
+            }
+            if (!in_array(explode(":", $header)[0], $no_headers)) {
+                $display_headers[] = $header;
+            }
+        };
 
         return $this->getParameters([
             'id' => md5($this->getUri($route).':'.implode($this->getMethods($route))),
@@ -92,7 +103,7 @@ class LaravelGenerator extends AbstractGenerator
             'description' => $routeDescription['long'],
             'methods' => $this->getMethods($route),
             'uri' => $this->getUri($route),
-            'headers' => $headers,
+            'headers' => $display_headers,
             'parameters' => [],
             'response' => $content,
             'showresponse' => $showresponse,
