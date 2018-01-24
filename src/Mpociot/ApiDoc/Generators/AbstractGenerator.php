@@ -35,7 +35,7 @@ abstract class AbstractGenerator
      *
      * @return array
      */
-    abstract public function processRoute($route, $bindings = [], $withResponse = true);
+    abstract public function processRoute($route, $bindings = [], $actUserIdAs, $withResponse = true);
 
     /**
      * Prepares / Disables route middlewares.
@@ -115,7 +115,7 @@ abstract class AbstractGenerator
      */
     protected function getParameters($routeData, $routeAction, $bindings)
     {
-        $validator = Validator::make([], $this->getRouteRules($routeAction['uses'], $bindings));
+        $validator = Validator::make([], $this->getRouteRules($routeAction['uses'], $bindings, $routeData));
         foreach ($validator->getRules() as $attribute => $rules) {
             $attributeData = [
                 'required' => false,
@@ -224,7 +224,7 @@ abstract class AbstractGenerator
      *
      * @return array
      */
-    protected function getRouteRules($route, $bindings)
+    protected function getRouteRules($route, $bindings, $routeData)
     {
         list($class, $method) = explode('@', $route);
         $reflection = new ReflectionClass($class);

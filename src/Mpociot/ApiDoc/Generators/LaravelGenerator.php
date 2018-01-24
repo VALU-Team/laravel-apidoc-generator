@@ -50,7 +50,7 @@ class LaravelGenerator extends AbstractGenerator
      *
      * @return array
      */
-    public function processRoute($route, $bindings = [], $headers = [], $withResponse = true)
+    public function processRoute($route, $bindings = [], $headers = [],  $actUserIdAs, $withResponse = true)
     {
         $content = '';
 
@@ -107,6 +107,7 @@ class LaravelGenerator extends AbstractGenerator
             'parameters' => [],
             'response' => $content,
             'showresponse' => $showresponse,
+            'act_user_id' => $actUserIdAs,
         ], $routeAction, $bindings);
     }
 
@@ -267,7 +268,7 @@ class LaravelGenerator extends AbstractGenerator
      *
      * @return array
      */
-    protected function getRouteRules($route, $bindings)
+    protected function getRouteRules($route, $bindings, $routeData)
     {
         list($class, $method) = explode('@', $route);
         $reflection = new ReflectionClass($class);
@@ -284,11 +285,18 @@ class LaravelGenerator extends AbstractGenerator
                     // Add route parameter bindings
                     $parameterReflection->query->add($bindings);
                     $parameterReflection->request->add($bindings);
+                    #$parameterReflection->setMethod($routeData['methods'][0]);
 
                     if (method_exists($parameterReflection, 'validator')) {
                         return app()->call([$parameterReflection, 'validator'])
                             ->getRules();
                     } else {
+                        $userModel = \App\User::class;
+                        $user = $userModel::find((int) $routeData['act_user_id']);
+                        // apiでなくなったら変える
+                        auth()->guard('api')->setUser($user);
+                        config()->set('auth.defaults.guard', 'api');
+                        /////
                         return app()->call([$parameterReflection, 'rules']);
                     }
                 }
