@@ -18,7 +18,7 @@
         "php": ">=5.5.0",
         "fzaninotto/faker": "~1.0",
         "laravel/framework": "~5.4",
-        "mpociot/documentarian": "dev-master",
+        "mpociot/documentarian": "^0.2.0",
         "mpociot/reflection-docblock": "^1.0",
         "ramsey/uuid": "^3.0"
     },
@@ -37,11 +37,5 @@
         "psr-4": {
             "Mpociot\\ApiDoc\\Tests\\": "tests/"
         }
-    },
-    "repositories": [
-        {
-            "type": "git",
-            "url": "https://github.com/VALU-Team/documentaria"
-        }
-    ]
+    }
 }
